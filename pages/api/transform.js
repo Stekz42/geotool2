@@ -40,21 +40,29 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'pedestrian-zones-raw.geojson ist kein gültiges JSON: ' + error.message });
     }
 
+    // Konvertiere restricted-zones in das neue Format
     const restrictedZones = restrictedRaw.features.map(feature => {
       const [lng, lat] = feature.geometry.coordinates;
       const type = feature.properties.amenity || feature.properties.leisure || 'unknown';
       const name = feature.properties.name || 'Unbekannt';
-      return { lat, lng, radius: 100, type, name };
+      return {
+        city: 'duesseldorf',
+        type,
+        name,
+        location: { type: 'Point', coordinates: [lng, lat] },
+        radius: 100
+      };
     });
 
-    // Filtere ungültige Polygone (weniger als 3 Punkte)
+    // Konvertiere pedestrian-zones in das neue Format und filtere ungültige Polygone
     const pedestrianZones = pedestrianRaw.features
       .map(feature => ({
+        city: 'duesseldorf',
         type: 'pedestrian',
-        coordinates: feature.geometry.coordinates
+        geometry: { type: 'Polygon', coordinates: feature.geometry.coordinates }
       }))
       .filter(zone => {
-        const isValid = zone.coordinates[0].length >= 3;
+        const isValid = zone.geometry.coordinates[0].length >= 3;
         if (!isValid) {
           console.warn('Ungültiges Polygon gefiltert (weniger als 3 Punkte):', zone);
         }
