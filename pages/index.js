@@ -64,4 +64,59 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px',
+    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+      <h1>GeoJSON Transformer</h1>
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '10px' }}>
+          <label>
+            Restricted Zones (GeoJSON):
+            <input
+              type="file"
+              accept=".geojson,.json"
+              onChange={(e) => setRestrictedFile(e.target.files[0])}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: '10px' }}>
+          <label>
+            Pedestrian Zones (GeoJSON):
+            <input
+              type="file"
+              accept=".geojson,.json"
+              onChange={(e) => setPedestrianFile(e.target.files[0])}
+            />
+          </label>
+        </div>
+        <button type="submit" style={{ padding: '10px 20px' }}>
+          Verarbeiten
+        </button>
+      </form>
+      {message && (
+        <p style={{ marginTop: '20px', color: message.includes('Fehler') ? 'red' : 'green' }}>
+          {message}
+        </p>
+      )}
+      {downloadLinks && (
+        <div style={{ marginTop: '20px' }}>
+          <h2>Downloads:</h2>
+          <div>
+            <a
+              href={downloadLinks.restricted}
+              download="restricted-zones.json"
+              style={{ marginRight: '10px', padding: '10px', background: '#0070f3', color: 'white', textDecoration: 'none' }}
+            >
+              Download restricted-zones.json
+            </a>
+            <a
+              href={downloadLinks.pedestrian}
+              download="pedestrian-zones.json"
+              style={{ padding: '10px', background: '#0070f3', color: 'white', textDecoration: 'none' }}
+            >
+              Download pedestrian-zones.json
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
