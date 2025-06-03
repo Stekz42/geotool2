@@ -24,7 +24,8 @@ export default async function handler(req, res) {
 
     const restrictedFile = files['restricted-zones']?.[0];
     const pedestrianFile = files['pedestrian-zones']?.[0];
-    const city = fields['city'];
+    // Extrahiere den Stadtwert und stelle sicher, dass es ein String ist
+    const city = Array.isArray(fields['city']) ? fields['city'][0] : fields['city'];
     if (!restrictedFile || !pedestrianFile || !city) {
       return res.status(400).json({ error: 'Bitte beide Dateien hochladen und eine Stadt angeben' });
     }
