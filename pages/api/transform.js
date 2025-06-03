@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   try {
     const form = formidable({ multiples: true });
 
-    const { files } = await new Promise((resolve, reject) => {
+    const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
         resolve({ fields, files });
@@ -24,8 +24,9 @@ export default async function handler(req, res) {
 
     const restrictedFile = files['restricted-zones']?.[0];
     const pedestrianFile = files['pedestrian-zones']?.[0];
-    if (!restrictedFile || !pedestrianFile) {
-      return res.status(400).json({ error: 'Bitte beide Dateien hochladen' });
+    const city = fields['city'];
+    if (!restrictedFile || !pedestrianFile || !city) {
+      return res.status(400).json({ error: 'Bitte beide Dateien hochladen und eine Stadt angeben' });
     }
 
     let restrictedRaw, pedestrianRaw;
@@ -40,13 +41,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'pedestrian-zones-raw.geojson ist kein gültiges JSON: ' + error.message });
     }
 
-    // Konvertiere restricted-zones in das neue Format
     const restrictedZones = restrictedRaw.features.map(feature => {
       const [lng, lat] = feature.geometry.coordinates;
       const type = feature.properties.amenity || feature.properties.leisure || 'unknown';
       const name = feature.properties.name || 'Unbekannt';
       return {
-        city: 'duesseldorf',
+        city,
         type,
         name,
         location: { type: 'Point', coordinates: [lng, lat] },
@@ -54,10 +54,9 @@ export default async function handler(req, res) {
       };
     });
 
-    // Konvertiere pedestrian-zones in das neue Format und filtere ungültige Polygone
     const pedestrianZones = pedestrianRaw.features
       .map(feature => ({
-        city: 'duesseldorf',
+        city,
         type: 'pedestrian',
         geometry: { type: 'Polygon', coordinates: feature.geometry.coordinates }
       }))
