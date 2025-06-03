@@ -6,11 +6,6 @@
       "use": "@vercel/next"
     }
   ],
-  "functions": {
-    "api/*.js": {
-      "maxDuration": 30
-    }
-  },
   "rewrites": [
     { "source": "/api/transform", "destination": "/transform.js" },
     { "source": "/(.*)", "destination": "/index.js" }
