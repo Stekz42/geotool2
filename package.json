@@ -1,0 +1,16 @@
+{
+  "name": "geojson-transformer-simple",
+  "version": "1.0.0",
+  "description": "A simple Next.js app to transform GeoJSON files and download the results",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "formidable": "^3.5.2",
+    "next": "^14.2.15"
+  }
+}
