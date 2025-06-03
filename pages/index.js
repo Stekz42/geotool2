@@ -3,13 +3,14 @@ import { useState } from 'react';
 export default function Home() {
   const [restrictedFile, setRestrictedFile] = useState(null);
   const [pedestrianFile, setPedestrianFile] = useState(null);
+  const [city, setCity] = useState('');
   const [message, setMessage] = useState('');
   const [downloadLinks, setDownloadLinks] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!restrictedFile || !pedestrianFile) {
-      setMessage('Bitte beide Dateien auswählen');
+    if (!restrictedFile || !pedestrianFile || !city) {
+      setMessage('Bitte beide Dateien auswählen und eine Stadt angeben');
       return;
     }
 
@@ -22,6 +23,7 @@ export default function Home() {
     const formData = new FormData();
     formData.append('restricted-zones', restrictedFile);
     formData.append('pedestrian-zones', pedestrianFile);
+    formData.append('city', city);
 
     setMessage('Verarbeite...');
     try {
@@ -67,6 +69,18 @@ export default function Home() {
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
       <h1>GeoJSON Transformer</h1>
       <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '10px' }}>
+          <label>
+            Stadt:
+            <input
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="z. B. Mettmann"
+              style={{ marginLeft: '10px', padding: '5px' }}
+            />
+          </label>
+        </div>
         <div style={{ marginBottom: '10px' }}>
           <label>
             Restricted Zones (GeoJSON):
