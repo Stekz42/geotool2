@@ -1,5 +1,5 @@
 {
-  "name": "geojson-transformer-simple",
+  "name": "geojson-transformer-flat",
   "version": "1.0.0",
   "description": "A simple Next.js app to transform GeoJSON files and download the results",
   "scripts": {
