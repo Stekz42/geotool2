@@ -47,10 +47,19 @@ export default async function handler(req, res) {
       return { lat, lng, radius: 100, type, name };
     });
 
-    const pedestrianZones = pedestrianRaw.features.map(feature => ({
-      type: 'pedestrian',
-      coordinates: feature.geometry.coordinates
-    }));
+    // Filtere ungültige Polygone (weniger als 3 Punkte)
+    const pedestrianZones = pedestrianRaw.features
+      .map(feature => ({
+        type: 'pedestrian',
+        coordinates: feature.geometry.coordinates
+      }))
+      .filter(zone => {
+        const isValid = zone.coordinates[0].length >= 3;
+        if (!isValid) {
+          console.warn('Ungültiges Polygon gefiltert (weniger als 3 Punkte):', zone);
+        }
+        return isValid;
+      });
 
     return res.status(200).json({
       message: `Erfolgreich verarbeitet: ${restrictedZones.length} restricted-zones, ${pedestrianZones.length} pedestrian-zones`,
